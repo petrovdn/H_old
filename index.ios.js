@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
-import { 
-  AppRegistry, 
+import io from 'socket.io-client/socket.io';
+import {
+  AppRegistry,
   Text,
-  StyleSheet, 
+  StyleSheet,
   ActivityIndicator,
   TextInput,
-  TouchableHighlight, 
-  View, 
-  AsyncStorage, Image} from 'react-native';
+  TouchableHighlight,
+  View,
+  AsyncStorage,
+  Image,
+  ActivityIndicatorIOS,
+} from 'react-native'
+
 var idClient;
 var styles = StyleSheet.create({
   text: {
@@ -63,6 +68,7 @@ var styles = StyleSheet.create({
     color: 'crimson'
   },
   waitString: {
+    marginTop: 20,
     marginBottom: 20,
     fontSize: 14,
     textAlign: 'center',
@@ -139,35 +145,33 @@ var spinner = this.state.isLoading ?
   ( <View/>);
 
  if (window.navigator && Object.keys(window.navigator).length == 0) {
-  window = Object.assign(window, { navigator: { userAgent: 'ReactNative' }});
+  
+   window = Object.assign(window, { navigator: { userAgent: 'ReactNative' }});
 }
-
+window.navigator.userAgent = 'react-native';
+  
 // This must be below your `window.navigator` hack above
-// const io = require('socket.io-client/socket.io');
-// const socket = io('ws://606ep.ru:1773', {
-//   jsonp: false,
-//   transports: ['websocket'] // you need to explicitly tell it to use websockets
-// });
 
-// 	socket.on('connect', function(){
-//        console.log('COnnected!!!');
-//     });
-//     socket.on('login', function(data){
-//         console.info('login', data);
-//         console.info(data.id);
-//         idClient = data.id;
-//     });
-//     socket.on('disconnect', function(){
-//         console.log('disconnected');
-//     });
+const socket = io('ws://606ep.ru:1773', {
+  jsonp: false,
+  transports: ['websocket'] // you need to explicitly tell it to use websockets
+});
 
-//     socket.on('task_status', data => this._handleOnSocket(data)
-//     )
+	socket.on('connect', function(){
+       console.log('COnnected!!!');
+    });
+    socket.on('login', function(data){
+        console.info('login', data);
+        console.info(data.id);
+        idClient = data.id;
+    });
+    socket.on('disconnect', function(){
+        console.log('disconnected');
+    });
 
-var ws = new WebSocket('ws://606ep.ru:1773');
-ws.onmessage = (e) => {  // a message was received
- console.log(e.data);
-};
+    socket.on('task_status', data => this._handleOnSocket(data)
+    )
+
 
 
 
